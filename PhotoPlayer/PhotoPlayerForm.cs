@@ -32,7 +32,7 @@ namespace PhotoPlayer
             if (File.Exists(_savePath))
             {
                 _picturePath = File.ReadAllText(_savePath);
-                if (_picturePath.Length!=0)
+                if (_picturePath.Length != 0)
                     LoadPictureFromFile();
             }
         }
@@ -40,10 +40,14 @@ namespace PhotoPlayer
         {
             try
             {
-                pictureBox1.Image = Image.FromFile(_picturePath);
+                Image loadedImage = Image.FromFile(_picturePath);
+                pictureBox1.Image = loadedImage;
+
                 Size = pictureBox1.Image.Size;
+
                 buttonLoadPicture.Visible = false;
                 buttonRemovePhoto.Visible = true;
+                buttonSave.Visible = true;
 
             }
             catch (OutOfMemoryException)
@@ -55,6 +59,7 @@ namespace PhotoPlayer
         {
             pictureBox1.Image = null;
             buttonRemovePhoto.Visible = false;
+            buttonSave.Visible = false;
             buttonLoadPicture.Visible = true;
             Size = defaultWindowSize;
         }
@@ -89,5 +94,26 @@ namespace PhotoPlayer
                 File.WriteAllText(_savePath, "");
         }
 
+        private void SaveImageAsJpg()
+        {
+            try
+            {
+                saveFileDialog1.Filter = "jpg files (*.jpg)|*.jpg";
+                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    string saveFilePath = saveFileDialog1.FileName;
+                    pictureBox1.Image.Save(saveFilePath, System.Drawing.Imaging.ImageFormat.Jpeg);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void buttonSave_Click(object sender, EventArgs e)
+        {
+            SaveImageAsJpg();
+        }
     }
 }
